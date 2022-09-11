@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:iot_project_final/home_screen2.dart';
 import 'package:iot_project_final/register_screen.dart';
 import 'package:iot_project_final/res/color.dart' as COLOR_APP;
 import 'package:fluttertoast/fluttertoast.dart';
@@ -229,7 +230,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   MoveToHome() {
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen2()),
         (route) => false);
   }
 

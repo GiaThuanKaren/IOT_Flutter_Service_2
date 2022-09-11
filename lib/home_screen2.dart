@@ -51,20 +51,19 @@ class HomeScreenState extends State<HomeScreen2> {
     //
     // });
 
-    KeyUSER= Cache.instance.key;
+    KeyUSER = Cache.instance.key;
     print(" Key Da luu ${KeyUSER}");
-    if(count>0){
+    if (count > 0) {
       // await uploadImage(File(ListOfFile[0].path), url, basename(ListOfFile[0].path), KeyUSER);
-      for(var index =0 ;index<count;index++){
+      for (var index = 0; index < count; index++) {
         print(basename(ListOfFile[index].path));
         File(ListOfFile[index].path);
 
-        await uploadImage(File(ListOfFile[index].path), url, basename(ListOfFile[index].path), KeyUSER);
+        await uploadImage(File(ListOfFile[index].path), url,
+            basename(ListOfFile[index].path), KeyUSER);
         await File(ListOfFile[index].path).delete();
-        print("da upload file thu ${index+1}");
-
+        print("da upload file thu ${index + 1}");
       }
-
     }
 
     print("So File ${count}");
@@ -79,24 +78,29 @@ class HomeScreenState extends State<HomeScreen2> {
       // Got a new connectivity status!
 
       print(result.name);
-      switch(result.name){
-        case "wifi":{
-          ScanFolderToUpload();
-          break;
-        }
-        case "mobile":{
-          print("Mobile Connection 4G/3G");
-          // ScanFolderToUpload();
-          break;
-        }
-        case "none":{
-          Fluttertoast.showToast(
-              msg: "Problem Internet Connection", backgroundColor: Colors.cyan);
-          break;
-        }
-        default:{
-          print("Can't find suitable case");
-        }
+      switch (result.name) {
+        case "wifi":
+          {
+            ScanFolderToUpload();
+            break;
+          }
+        case "mobile":
+          {
+            print("Mobile Connection 4G/3G");
+            // ScanFolderToUpload();
+            break;
+          }
+        case "none":
+          {
+            Fluttertoast.showToast(
+                msg: "Problem Internet Connection",
+                backgroundColor: Colors.cyan);
+            break;
+          }
+        default:
+          {
+            print("Can't find suitable case");
+          }
       }
     });
   }
@@ -167,6 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _imageFileList = value == null ? null : <XFile>[value];
   }
 
+  var imagePickedState;
   dynamic _pickImageError;
   bool isVideo = false;
   VideoPlayerController? _controller;
@@ -242,15 +247,6 @@ class _MyHomePageState extends State<MyHomePage> {
     //App Document Directory + folder name
   }
 
-  // Future<String> createDirByFolder(String Root , String Path){
-  //   new Directory('${RootPath}/${FolderName}').create()
-  //   // The created directory is returned as a Future.
-  //       .then((Directory directory) {
-  //     print(directory.path);
-  //   });
-  // }
-// Di chuyển file sang nơi khác
-
   Future<File> moveFile(File sourceFile, String FolderName, String RootPath,
       String FileName) async {
     print("Move File Started");
@@ -285,37 +281,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  // Future<Response> uploadImage(
-  //     File file, String url, String FileName, String KeyUSER) async {
-  //   // var request = http.MultipartRequest('POST', Uri.parse(url));
-  //   // request.files.add(await http.MultipartFile.fromPath('image', filepath));
-  //   // var res = await request.send();
-  //   // return res.reasonPhrase;
-  //
-  //   var dio = Dio();
-  //   var formData = FormData.fromMap({
-  //     'name': 'wendux',
-  //     'age': 25,
-  //     'key': KeyUSER,
-  //     'tenfile': await MultipartFile.fromFile(file.path, filename: FileName),
-  //     // 'file': await MultipartFile.fromFile('./text.txt', filename: 'upload.txt'),
-  //     // 'files': [
-  //     //   await MultipartFile.fromFile('./text1.txt', filename: 'text1.txt'),
-  //     //   await MultipartFile.fromFile('./text2.txt', filename: 'text2.txt'),
-  //     // ]
-  //   });
-  //   var response = await dio.post(
-  //     url,
-  //     data: formData,
-  //     onSendProgress: (int sent, int total) {
-  //       var percent = (sent / total) * 100;
-  //       print('$sent $total $percent');
-  //     },
-  //   );
-  //   return response;
-  // }
-
-  Future<void> _saveImageFile(File image, String FileName) async {
+  Future<Response> _saveImageFile(File image, String FileName) async {
     // đuongan /storage/emulated/0/Android/data/com.example.cam1/files/MyImages
     final exDir = await getExternalStorageDirectory();
     print(exDir);
@@ -330,50 +296,112 @@ class _MyHomePageState extends State<MyHomePage> {
       final NewFolderPath = await Directory(MyImagePath).create();
       NewPathMoveImage = NewFolderPath.path;
     }
-    Cache.instance.load().listen((event) {}, onDone: () {
-      print("Key Da Luu Trong Preference 123 ");
-    });
-    // Copy Section
+
     var Network = GetCurrentIPNetWork();
     Response response_upload = await uploadImage(
         image, "${Network}/upload", FileName, Cache.instance.key);
-    dynamic jsonConv = jsonDecode(response_upload.toString());
-    print(
-        "Respone After Upload  ${jsonConv["text"]} ${jsonConv["statusCode"]}");
-    switch (jsonConv['statusCode']) {
-      case 200:
-        {
-          print(jsonConv['text'] +
-              "gui file thanh cong , khong luu tru trong foler ");
-          Fluttertoast.showToast(
-              msg: jsonConv["text"], backgroundColor: Colors.cyan);
-          break;
-        }
-      case 404:
-        {
-          print(jsonConv['text'] +
-              "gui file that bai , tien hanh luu trong bo nho");
-          Fluttertoast.showToast(
-              msg: jsonConv["text"], backgroundColor: Colors.red);
-          var NewPlace = await image.copy("${NewPathMoveImage}/${FileName}");
-          print(NewPlace.path);
-          var ListOfFile =
-              await Directory(MyImagePath).list(recursive: true).toList();
-          var count = ListOfFile.length;
-          print("So File ${count}");
-          break;
-        }
-      default:
-        {
-          print("Can't find a suitable case , Error");
-        }
-    }
+    return response_upload;
+    // dynamic jsonConv = jsonDecode(response_upload.toString());
+    // print(
+    //     "Respone After Upload  ${jsonConv["text"]} ${jsonConv["statusCode"]}");
+    // switch (jsonConv['statusCode']) {
+    //   case 200:
+    //     {
+    //       print(jsonConv['text'] +
+    //           "gui file thanh cong , khong luu tru trong foler ");
+    //       Fluttertoast.showToast(
+    //           msg: jsonConv["text"], backgroundColor: Colors.cyan);
+    //       break;
+    //     }
+    //   case 404:
+    //     {
+    //       print(jsonConv['text'] +
+    //           "gui file that bai , tien hanh luu trong bo nho");
+    //       Fluttertoast.showToast(
+    //           msg: jsonConv["text"], backgroundColor: Colors.red);
+    //       var NewPlace = await image.copy("${NewPathMoveImage}/${FileName}");
+    //       print(NewPlace.path);
+    //       var ListOfFile =
+    //           await Directory(MyImagePath).list(recursive: true).toList();
+    //       var count = ListOfFile.length;
+    //       print("So File ${count}");
+    //       break;
+    //     }
+    //   default:
+    //     {
+    //       print("Can't find a suitable case , Error");
+    //     }
+    // }
     // var NewPlace = await image.copy("${NewPathMoveImage}/${FileName}");
     // print(NewPlace.path);
     var ListOfFile =
         await Directory(MyImagePath).list(recursive: true).toList();
     var count = ListOfFile.length;
     print("So File ${count}");
+  }
+
+  Widget showImagePreviewWidget(var image, String filename) {
+    return FutureBuilder<Response>(
+      future: _saveImageFile(image, filename),
+      builder: (context, snapshot) {
+        print("Data Respone ${snapshot.data.toString()}");
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: Text("Image is uploading"),
+          );
+        }
+        if (snapshot.hasData) {
+          dynamic jsonConv = jsonDecode(snapshot.data.toString());
+          switch (jsonConv['statusCode']) {
+            case 200:
+              {
+                print(jsonConv['text'] +
+                    "gui file thanh cong , khong luu tru trong foler ");
+                // Fluttertoast.showToast(
+                //     msg: jsonConv["text"], backgroundColor: Colors.cyan);
+                return Center(
+                  child: Text(jsonConv['text'], textAlign: TextAlign.center),
+                );
+                break;
+              }
+            case 404:
+              {
+                print(jsonConv['text'] +
+                    "gui file that bai , tien hanh luu trong bo nho");
+
+                // Fluttertoast.showToast(
+                //     msg: jsonConv["text"], backgroundColor: Colors.red);
+                // var NewPlace = await image.copy("${NewPathMoveImage}/${FileName}");
+                // print(NewPlace.path);
+                // var ListOfFile =
+                //     await Directory(MyImagePath).list(recursive: true).toList();
+                // var count = ListOfFile.length;
+                // print("So File ${count}");
+                return Center(
+                  child: Text(jsonConv['text'], textAlign: TextAlign.center),
+                );
+                break;
+              }
+            default:
+              {
+                print("Can't find a suitable case , Error");
+              }
+          }
+          // return Center(
+          //   child: Text("Co Data",textAlign: TextAlign.center),
+          // );
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Failed To Upload Image , Please Try again"),
+          );
+        } else
+          return Center(
+            child: Text("You haven't picked image yet"),
+          );
+        return Text("No widget to build");
+      },
+    );
   }
 
   Future<void> _onImageButtonPressed(ImageSource source,
@@ -486,18 +514,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _previewImages() {
-    // if(_imageFileList != null){
-    //   for(var i=0;i<_imageFileList!.length;i++){
-    //     print(i);
-    //     moveFile(File(_imageFileList![i].path),"/storage/emulated/0/DCIM/"+_imageFileList![i].name);
-    //
-    //   }
-    // }
+    // return showImagePreviewWidget(imagePickedState, basename(imagePickedState.path));
 
     final Text? retrieveError = _getRetrieveErrorWidget();
     if (retrieveError != null) {
       return retrieveError;
     }
+    // _imageFileList != null
     if (_imageFileList != null) {
       return Semantics(
         label: 'image_picker_example_picked_images',
@@ -508,9 +531,17 @@ class _MyHomePageState extends State<MyHomePage> {
             // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
             return Semantics(
               label: 'image_picker_example_picked_image',
-              child: kIsWeb
-                  ? Image.network(_imageFileList![index].path)
-                  : Image.file(File(_imageFileList![index].path)),
+              // child: showImagePreviewWidget(),
+              // child: Image.file(imagePickedState.path),
+              child: imagePickedState != null
+                  ? showImagePreviewWidget(
+                      imagePickedState, basename(imagePickedState.path))
+                  : kIsWeb
+                      ? Image.network(_imageFileList![index].path)
+                      : Image.file(File(_imageFileList![index].path)),
+              // child: kIsWeb
+              //     ? Image.network(_imageFileList![index].path)
+              //     : Image.file(File(_imageFileList![index].path)),
             );
           },
           itemCount: _imageFileList!.length,
@@ -524,6 +555,8 @@ class _MyHomePageState extends State<MyHomePage> {
         textAlign: TextAlign.center,
       );
     } else {
+      // Text  Have Not
+      // return Image.file(imagePickedState?.path);
       return Text(
         'You have not yet picked an image.',
         textAlign: TextAlign.center,
@@ -563,12 +596,34 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void GetImageFromCamera() async {
+    XFile? image =
+        await _picker.pickImage(source: ImageSource.camera, imageQuality: 90);
+    if (image != null) {
+      // imagePickedState = File(image.path);
+      print("Ten Anh ${basename(File(image.path).path)}");
+      // setState(() {
+      //   // _setImageFileListFromFile();
+      // });
+      setState(() {
+        imagePickedState = File(image.path);
+        _setImageFileListFromFile(image);
+      });
+      // await _saveImageFile(File(image.path), image.name);
+    }
+
+//     setState(() {
+//       if (image != null) {
+//         imagePickedState = File(image.path);
+//
+// //        leafResponse = _apiService.findLeaf(_imageFile);
+//       }
+//     });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title!),
-      ),
       body: Center(
         child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
             ? FutureBuilder<void>(
@@ -619,10 +674,10 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
               onPressed: () {
-                isVideo = false;  
-                var a=5;
-                var b=6;
-                print(a<b);
+                isVideo = false;
+                var a = 5;
+                var b = 6;
+                print(a < b);
                 // _onImageButtonPressed(
                 //   ImageSource.gallery,
                 //   context: context,
@@ -658,7 +713,9 @@ class _MyHomePageState extends State<MyHomePage> {
             child: FloatingActionButton(
               onPressed: () {
                 isVideo = false;
-                _onImageButtonPressed(ImageSource.camera, context: context);
+                print("Test Open Camera");
+                GetImageFromCamera();
+                // _onImageButtonPressed(ImageSource.camera, context: context);
                 // _saveImageFile();
               },
               heroTag: 'image2',

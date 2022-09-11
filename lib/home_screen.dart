@@ -506,6 +506,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // Why network for web?
             // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
             return Semantics(
+              
               label: 'image_picker_example_picked_image',
               child: kIsWeb
                   ? Image.network(_imageFileList![index].path)
