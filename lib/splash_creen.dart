@@ -4,7 +4,7 @@ import 'package:iot_project_final/res/color.dart' as COLOR_APP;
 import 'package:iot_project_final/utils/cache.dart';
 
 import 'home_screen.dart';
-
+import './home_screen2.dart';
 class SplashScreen extends StatefulWidget {
 
   @override
@@ -60,9 +60,12 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   _goHomeScreen() {
+    // Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (context) =>  HomeScreen()),
+    //     (route) => false);
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) =>  HomeScreen()),
-        (route) => false);
+        MaterialPageRoute(builder: (context) =>  HomeScreen2()),
+            (route) => false);
   }
 
   _goLoginScreen() {

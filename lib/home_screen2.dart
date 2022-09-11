@@ -18,14 +18,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen2 extends StatefulWidget {
   @override
   HomeScreenState createState() {
     return HomeScreenState();
   }
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen2> {
   @override
   var subscription;
   void initState() {
@@ -45,7 +45,7 @@ class HomeScreenState extends State<HomeScreen> {
     var ListOfFile =
         await Directory(MyImagePath).list(recursive: true).toList();
     var count = ListOfFile.length;
-    var url = 'http://${GetCurrentIPNetWork()}:5000/upload';
+    var url = '${GetCurrentIPNetWork()}/upload';
     var KeyUSER;
     // Cache.instance.load().listen((event) { },onDone: (){
     //
@@ -59,7 +59,8 @@ class HomeScreenState extends State<HomeScreen> {
         print(basename(ListOfFile[index].path));
         File(ListOfFile[index].path);
 
-        // await uploadImage(File(ListOfFile[index].path), url, basename(ListOfFile[index].path), KeyUSER);
+        await uploadImage(File(ListOfFile[index].path), url, basename(ListOfFile[index].path), KeyUSER);
+        await File(ListOfFile[index].path).delete();
         print("da upload file thu ${index+1}");
 
       }
