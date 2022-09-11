@@ -359,6 +359,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     "gui file thanh cong , khong luu tru trong foler ");
                 // Fluttertoast.showToast(
                 //     msg: jsonConv["text"], backgroundColor: Colors.cyan);
+                return Column(
+                  children: [
+                    kIsWeb
+                        ? Image.network(image.path)
+                        : Image.file(File(image.path)),
+                    Text(jsonConv['text'], textAlign: TextAlign.center)
+                  ],
+                );
+                return kIsWeb
+                    ? Image.network(image.path)
+                    : Image.file(File(image.path));
+
                 return Center(
                   child: Text(jsonConv['text'], textAlign: TextAlign.center),
                 );
@@ -530,19 +542,16 @@ class _MyHomePageState extends State<MyHomePage> {
             // Why network for web?
             // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
             return Semantics(
-              label: 'image_picker_example_picked_image',
-              // child: showImagePreviewWidget(),
-              // child: Image.file(imagePickedState.path),
-              child: imagePickedState != null
-                  ? showImagePreviewWidget(
-                      imagePickedState, basename(imagePickedState.path))
-                  : kIsWeb
-                      ? Image.network(_imageFileList![index].path)
-                      : Image.file(File(_imageFileList![index].path)),
-              // child: kIsWeb
-              //     ? Image.network(_imageFileList![index].path)
-              //     : Image.file(File(_imageFileList![index].path)),
-            );
+                label: 'image_picker_example_picked_image',
+                // child: showImagePreviewWidget(),
+                // child: Image.file(imagePickedState.path),
+                child: showImagePreviewWidget(
+                    imagePickedState, basename(imagePickedState.path))
+
+                // child: kIsWeb
+                //     ? Image.network(_imageFileList![index].path)
+                //     : Image.file(File(_imageFileList![index].path)),
+                );
           },
           itemCount: _imageFileList!.length,
         ),
@@ -658,56 +667,56 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          Semantics(
-            label: 'image_picker_example_from_gallery',
-            child: FloatingActionButton(
-              onPressed: () {
-                isVideo = false;
-                _onImageButtonPressed(ImageSource.gallery, context: context);
-              },
-              heroTag: 'image3',
-              tooltip: 'Pick Image from gallery',
-              child: const Icon(Icons.photo_album),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                isVideo = false;
-                var a = 5;
-                var b = 6;
-                print(a < b);
-                // _onImageButtonPressed(
-                //   ImageSource.gallery,
-                //   context: context,
-                //   isMultiImage: true,
-                // );
-                // ImageSource.values.
-                // _onImageButtonPressed(ImageSource.gallery, context: context);
-                print("Upload Image From Current Folder");
-              },
-              heroTag: 'image0',
-              tooltip: 'Upload Image from gallery',
-              child: const Icon(Icons.upload_file),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                isVideo = false;
-                _onImageButtonPressed(
-                  ImageSource.gallery,
-                  context: context,
-                  isMultiImage: true,
-                );
-              },
-              heroTag: 'image1',
-              tooltip: 'Pick Multiple Image from gallery',
-              child: const Icon(Icons.photo_library),
-            ),
-          ),
+          // Semantics(
+          //   label: 'image_picker_example_from_gallery',
+          //   child: FloatingActionButton(
+          //     onPressed: () {
+          //       isVideo = false;
+          //       _onImageButtonPressed(ImageSource.gallery, context: context);
+          //     },
+          //     heroTag: 'image3',
+          //     tooltip: 'Pick Image from gallery',
+          //     child: const Icon(Icons.photo_album),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 16.0),
+          //   child: FloatingActionButton(
+          //     onPressed: () {
+          //       isVideo = false;
+          //       var a = 5;
+          //       var b = 6;
+          //       print(a < b);
+          //       // _onImageButtonPressed(
+          //       //   ImageSource.gallery,
+          //       //   context: context,
+          //       //   isMultiImage: true,
+          //       // );
+          //       // ImageSource.values.
+          //       // _onImageButtonPressed(ImageSource.gallery, context: context);
+          //       print("Upload Image From Current Folder");
+          //     },
+          //     heroTag: 'image0',
+          //     tooltip: 'Upload Image from gallery',
+          //     child: const Icon(Icons.upload_file),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 16.0),
+          //   child: FloatingActionButton(
+          //     onPressed: () {
+          //       isVideo = false;
+          //       _onImageButtonPressed(
+          //         ImageSource.gallery,
+          //         context: context,
+          //         isMultiImage: true,
+          //       );
+          //     },
+          //     heroTag: 'image1',
+          //     tooltip: 'Pick Multiple Image from gallery',
+          //     child: const Icon(Icons.photo_library),
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
